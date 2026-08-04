@@ -23,7 +23,7 @@ phases:
         echo "Logging in to Amazon ECR..."
         ACCOUNT_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_URI
-        IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+        IMAGE_TAG=$(printf '%.7s' "$CODEBUILD_RESOLVED_SOURCE_VERSION")
         if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG=latest; fi
         echo "IMAGE_TAG=$IMAGE_TAG"
 
