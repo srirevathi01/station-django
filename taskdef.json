@@ -6,8 +6,8 @@
   ],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::412887500313:role/station-dev-ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::412887500313:role/station-dev-ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::423351912095:role/station-dev-ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::423351912095:role/station-dev-ecsTaskRole",
   "containerDefinitions": [
     {
       "name": "django",
