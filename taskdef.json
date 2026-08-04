@@ -11,7 +11,7 @@
   "containerDefinitions": [
     {
       "name": "django",
-      "image": "django",
+      "image": "<IMAGE1_NAME>",
       "essential": true,
       "portMappings": [
         {
