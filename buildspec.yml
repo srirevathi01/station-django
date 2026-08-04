@@ -23,7 +23,7 @@ phases:
         echo "Logging in to Amazon ECR..."
         ACCOUNT_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_URI
-        IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
+        IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
         if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG=latest; fi
         echo "IMAGE_TAG=$IMAGE_TAG"
 
@@ -38,13 +38,14 @@ phases:
       - echo "Pushing Docker image..."
       - docker push $ACCOUNT_URI/$IMAGE_REPO_NAME:$IMAGE_TAG
 
-      - echo "Creating imageDetail.json..."
-      - printf '{"ImageURI":"%s"}' "$ACCOUNT_URI/$IMAGE_REPO_NAME:$IMAGE_TAG" > imageDetail.json
-      - cat imageDetail.json
+      - echo "Creating imagedefinitions.json..."
+      - printf '[{"name":"django","imageUri":"%s"}]' "$ACCOUNT_URI/$IMAGE_REPO_NAME:$IMAGE_TAG" > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
     - taskdef.json
     - appspec.yaml
     - imageDetail.json
+    - imagedefinitions.json
   base-directory: .
