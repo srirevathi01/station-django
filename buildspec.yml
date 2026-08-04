@@ -9,12 +9,23 @@ env:
 phases:
   pre_build:
     commands:
-      - cd $CODEBUILD_SRC_DIR/station-django
-      - echo "Logging in to Amazon ECR..."
-      - ACCOUNT_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_URI
-      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG=latest; fi
+      - |
+        if [ -d "$CODEBUILD_SRC_DIR/station-django" ]; then
+          PROJECT_DIR="$CODEBUILD_SRC_DIR/station-django"
+        elif [ -d "$CODEBUILD_SRC_DIR" ]; then
+          PROJECT_DIR="$CODEBUILD_SRC_DIR"
+        else
+          echo "Could not determine project directory"
+          exit 1
+        fi
+        cd "$PROJECT_DIR"
+        echo "Using project directory: $PROJECT_DIR"
+        echo "Logging in to Amazon ECR..."
+        ACCOUNT_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_URI
+        IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
+        if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG=latest; fi
+        echo "IMAGE_TAG=$IMAGE_TAG"
 
   build:
     commands:
@@ -36,4 +47,4 @@ artifacts:
     - taskdef.json
     - appspec.yaml
     - imageDetail.json
-  base-directory: station-django
+  base-directory: .
